@@ -1,7 +1,9 @@
-import math
 a = float(input())
-b = a - int(a)
-if b == 0.5:
-    print(math.ceil(a))
-else:
-    print(round(a))
+b = float(input())
+c = float(input())
+d = float(input())
+e = float(input())
+f = float(input())
+y = (a*f - e*c)/(a*d - b*c)
+x = (e*d - b*f)/(a*d - b*c)
+print(x, y)
