@@ -6,3 +6,4 @@ m = int(input())
 list_bomb = []
 for i in range(m):
     list_bomb.append(i)
+tuple_city =
