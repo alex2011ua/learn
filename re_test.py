@@ -1,21 +1,18 @@
-def poisk(list2):
-    list2.sort()
-    summ = 0
-    i = 0
-    while summ < inp[0]:
-        summ += list2[i]
-        i += 1
-    return i - 1
+class Man:
+    height = 0
+    name = ''
 
+def manKey(man):
+    return (-man.height, man.name)
 
-inp = list(map(int, (input().split())))
-list_1 = []
-summ = 0
-for i in range(inp[1]):
-    s = int(input())
-    list_1.append(s)
-    summ += s
-if summ <= inp[0]:
-    print(inp[1])
-else:
-    print(poisk(list_1))
+n = int(input())
+peopleList = []
+for i in range(n):
+    tempManData = input().split()
+    man = Man()
+    man.height = int(tempManData[0])
+    man.name = tempManData[1]
+    peopleList.append(man)
+peopleList.sort(key=manKey)
+for man in peopleList:
+    print(man.height, man.name)
