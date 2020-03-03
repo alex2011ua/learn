@@ -2,10 +2,11 @@ my_list = []
 my_dict = {}
 count_line = 0
 
+
 def mu_print(*arg):
     with open("output.txt", 'w', encoding='utf8') as file:
         for item in arg:
-            lim = str(arg + '\n')
+            lim = str(str(item) + '\n')
             file.writelines(lim)
 
 
@@ -17,7 +18,6 @@ with open('input.txt', encoding='utf8') as file:
 for key, count in my_dict.items():
     my_list.append((-count, key))
 my_list.sort()
-print(my_list[0][0]*-2, '&', count_line)
 if my_list[0][0] * -2 > count_line:
     mu_print(my_list[0][1])
 else:
