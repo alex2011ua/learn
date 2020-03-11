@@ -1,12 +1,12 @@
 from sys import stdin
 import copy
 
-
 class Matrix():
     def __init__(self, mylst):
         self.list = copy.deepcopy(mylst)
         self.col_stroka = len(self.list)
         self.col_stolbec = len(self.list[0])
+
 
     def __str__(self):
         my_str = ""
