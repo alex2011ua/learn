@@ -2,6 +2,12 @@ from sys import stdin
 import copy
 
 
+class MatrixError(BaseException):
+    def __init__(self, fest, other):
+        self.matrix1 = fest
+        self.matrix2 = other
+
+
 class Matrix():
     def __init__(self, mylst):
         self.list = copy.deepcopy(mylst)
@@ -27,15 +33,46 @@ class Matrix():
                 result_matrix[line][column] = item
         return Matrix(result_matrix)
 
-    def __mul__(self, cislo):
+    def __mul__(self, other):
         result_matrix = [[0] * self.col_stolb for i in range(self.col_stroka)]
-        for line in range(self.col_stroka):
-            for column in range(self.col_stolb):
-                item = self.list[line][column] * cislo
-                result_matrix[line][column] = item
-        return Matrix(result_matrix)
+        if isinstance(other, int) or isinstance(other, float):
+            for line in range(self.col_stroka):
+                for column in range(self.col_stolb):
+                    item = self.list[line][column] * other
+                    result_matrix[line][column] = item
+            return Matrix(result_matrix)
+        elif isinstance(other, Matrix):
+            if self.col_stolb == other.col_stroka:
+                result_matrix = [[0] * self.col_stolb for i in range(other.col_stroka)]
+
+                for line in range(other.col_stroka):
+                    for column in range(self.col_stolb):
+                        summa = 0
+                        for ind_a in range(self.col_stolb):
+                            summa += self.list[line][ind_a] * other.list[ind_a][column]
+
+                        item = summa
+                        result_matrix[line][column] = item
+                return Matrix(result_matrix)
+        else:
+            raise MatrixError(self, other)
+
 
     __rmul__ = __mul__
 
-
-exec(stdin.read())
+mid = Matrix([[1, 0, 0],
+              [0, 1, 0],
+              [0, 0, 1]])
+m1 = Matrix([[3, 2],
+             [-10, 0],
+             [14, 5]])
+m2 = Matrix([[5, 2, 10], [-0.5, -0.25, 18], [-22, -2.5, -0.125]])
+print(mid * m1)
+print(mid * m2)
+print(m2 * m1)
+try:
+    m = m1 * m2
+    print("WA It should be error")
+except MatrixError as e:
+    print(e.matrix1)
+    print(e.matrix2)
