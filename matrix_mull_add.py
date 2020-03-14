@@ -41,16 +41,13 @@ class Matrix():
                     item = self.list[line][column] * other
                     result_matrix[line][column] = item
             return Matrix(result_matrix)
-
         elif isinstance(other, Matrix):
             if self.col_stolb == other.col_stroka:
-
-                result_matrix = [[0] * other.col_stolb for i in range(self.col_stroka)]
-
+                result_matrix = \
+                    [[0] * other.col_stolb for i in range(self.col_stroka)]
                 for line in range(self.col_stroka):
                     for column in range(other.col_stolb):
                         summa = 0
-
                         for num, ind_a in enumerate(self.list[line]):
                             summa += ind_a * other.list[num][column]
                         item = summa
@@ -58,28 +55,19 @@ class Matrix():
                 return Matrix(result_matrix)
             else:
                 raise MatrixError(self, other)
-
         else:
             raise MatrixError(self, other)
 
-
     __rmul__ = __mul__
-#[[0, 0],
-# [0, 0],
-# [0, 0]]
-mid = Matrix([[1, 0, 0],
-              [0, 1, 0],
-              [0, 0, 1]])
-m1 = Matrix([[3, 2],
-             [-10, 0],
-             [14, 5]])
+
+#exec(stdin.read())
+
+m1 = Matrix([[3, 2], [-10, 0], [14, 5]])
+
 m2 = Matrix([[5, 2, 10], [-0.5, -0.25, 18], [-22, -2.5, -0.125]])
-print(mid * m1)
-print(mid * m2)
+
 print(m2 * m1)
-try:
-    m = m1 * m2
-    print("WA It should be error")
-except MatrixError as e:
-    print(e.matrix1)
-    print(e.matrix2)
+
+print(Matrix.transposed(m2 * m1))
+
+print(m1.transpose() * m2.transpose())
