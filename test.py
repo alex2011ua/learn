@@ -41,25 +41,32 @@ class Matrix():
                     item = self.list[line][column] * other
                     result_matrix[line][column] = item
             return Matrix(result_matrix)
+
         elif isinstance(other, Matrix):
             if self.col_stolb == other.col_stroka:
-                result_matrix = [[0] * self.col_stolb for i in range(other.col_stroka)]
 
-                for line in range(other.col_stroka):
-                    for column in range(self.col_stolb):
+                result_matrix = [[0] * other.col_stolb for i in range(self.col_stroka)]
+
+                for line in range(self.col_stroka):
+                    for column in range(other.col_stolb):
                         summa = 0
-                        for ind_a in range(self.col_stolb):
-                            summa += self.list[line][ind_a] * other.list[ind_a][column]
 
+                        for num, ind_a in enumerate(self.list[line]):
+                            summa += ind_a * other.list[num][column]
                         item = summa
                         result_matrix[line][column] = item
                 return Matrix(result_matrix)
+            else:
+                raise MatrixError(self, other)
+
         else:
             raise MatrixError(self, other)
 
 
     __rmul__ = __mul__
-
+#[[0, 0],
+# [0, 0],
+# [0, 0]]
 mid = Matrix([[1, 0, 0],
               [0, 1, 0],
               [0, 0, 1]])
