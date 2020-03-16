@@ -60,29 +60,24 @@ class Matrix():
 
     __rmul__ = __mul__
 
-#exec(stdin.read())
+    def transpose(self):
+        result_matrix = [[0] * self.col_stroka for i in range(self.col_stolb)]
+        for line in range(self.col_stroka):
+            for column in range(self.col_stolb):
+                result_matrix[column][line] = self.list[line][column]
+        self.list = result_matrix
+        self.col_stroka = len(self.list)
+        self.col_stolb = len(self.list[0])
+        return self
 
-m1 = Matrix([[3, 2], [-10, 0], [14, 5]])
+    @staticmethod
+    def transposed(matrix):
 
-m2 = Matrix([[5, 2, 10], [-0.5, -0.25, 18], [-22, -2.5, -0.125]])
+        result_matrix = [[0] * matrix.col_stroka
+                         for i in range(matrix.col_stolb)]
+        for line in range(matrix.col_stroka):
+            for column in range(matrix.col_stolb):
+                result_matrix[column][line] = matrix.list[line][column]
+        return Matrix(result_matrix)
 
-print(m2 * m1)
-
-print(Matrix.transposed(m2 * m1))
-
-print(m1.transpose() * m2.transpose())
-'''Ответ:
-
-135 60
-
-253.0 89.0
-
--42.75 -44.625
-
-135 253.0 -42.75
-
-60 89.0 -44.625
-
-135 253.0 -42.75
-
-60 89.0 -44.625'''
+exec(stdin.read())
