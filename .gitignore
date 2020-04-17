@@ -1,6 +1,4 @@
 
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/learn.iml
-.idea/misc.xml
-.idea/modules.xml
-.idea/vcs.xml
+.idea/**
+/env/**
+.idea/*.*
