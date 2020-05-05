@@ -1,10 +1,9 @@
 import asyncio
-import re
 
 
 class ClientServerProtocol(asyncio.Protocol):
     def __init__(self):
-        self.data = {}
+        self.data = {'a': [(1.2, 44)]}
 
     def connection_made(self, transport):
         self.transport = transport
@@ -46,9 +45,9 @@ class ClientServerProtocol(asyncio.Protocol):
             for key in self.data:
                 answer = answer + self.text_dict(key, self.data[key])
             return answer
-        result = re.findall(r'\w*\n', put_text)
-        if len(result) > 1 or result[0] != put_text:
+        if ' ' in put_text or put_text == '\n':
             return "error\nwrong command\n"
+
         put_text = put_text.strip()
         if put_text in self.data:
             return answer + self.text_dict(put_text, self.data[put_text])
