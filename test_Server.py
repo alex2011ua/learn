@@ -13,8 +13,8 @@ from client import Client, ClientError
 
 
 def run(host, port):
-    client1 = Client(host, port, timeout=5)
-    client2 = Client(host, port, timeout=5)
+    client1 = Client(host, port)
+    client2 = Client(host, port)
     command = "wrong command test\n"
 
     try:

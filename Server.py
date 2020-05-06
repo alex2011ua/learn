@@ -2,13 +2,17 @@ import asyncio
 
 
 class ClientServerProtocol(asyncio.Protocol):
+    data = {}
+
     def __init__(self):
-        self.data = {'a': [(1.2, 44)]}
+        pass
 
     def connection_made(self, transport):
         self.transport = transport
 
     def data_received(self, data):
+        if data == b'\r\n':
+            return
         resp = self.process_data(data.decode('utf-8'))
 
         resp = resp+"\n"
@@ -31,10 +35,17 @@ class ClientServerProtocol(asyncio.Protocol):
         put_text = put_text.strip()
         try:
             key, value, timestamp = put_text.split()
-            #timestamp = timestamp[:-2]
+            # timestamp = timestamp[:-2]
             if key not in self.data:
                 self.data[key] = []
+                self.data[key].append((float(value), int(timestamp)))
+                return "ok\n"
+
+            for item in self.data[key]:
+                if item[1] == int(timestamp):
+                    self.data[key].remove(item)
             self.data[key].append((float(value), int(timestamp)))
+
             return "ok\n"
         except:
             return "error\nwrong command\n"
@@ -84,4 +95,4 @@ def run_server(host, port):
     loop.close()
 
 
-run_server('127.0.0.1', 8888)
+#run_server('127.0.0.1', 8888)
