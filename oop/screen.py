@@ -6,12 +6,54 @@ import random
 import math
 
 SCREEN_DIM = (800, 600)
+FPS = 120
+
+
+class Vec2d:
+    def __init__(self, x, y, speed_x, speed_y):
+        self.x = x
+        self.y = y
+
+        self.speed_x = speed_x
+        self.speed_y = speed_y
+
+    def __add__(self, other):
+        """возвращает сумму двух векторов"""
+        return self.x + other.x, self.y + other.y
+
+    def __sub__(self, other):
+        return self.x - other.x, self.y - other.y
+
+    def __mul__(self, k):
+        """возвращает произведение вектора на число"""
+        return self.x * k, self.y * k
+
+    def lengh(self):
+        """возвращает длину вектора"""
+        return math.sqrt(self.x * self.x + self.y * self.y)
+
+    def int_pair(self):
+        return self.x, self.y
+
+
+class Polyline:
+    def ad
+
+    def set_points(self):
+        pass
+    def draw_points(self):
+        pass
+
+
+class Knot(Polyline):
+    pass
+
+
 
 
 # =======================================================================================
 # Функции для работы с векторами
 # =======================================================================================
-
 def sub(x, y):
     """"возвращает разность двух векторов"""
     return x[0] - y[0], x[1] - y[1]
@@ -128,7 +170,7 @@ if __name__ == "__main__":
     pygame.init()
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
-
+    clock = pygame.time.Clock()
     steps = 35
     working = True
     points = []
@@ -138,6 +180,7 @@ if __name__ == "__main__":
 
     hue = 0
     color = pygame.Color(0)
+
 
     while working:
         for event in pygame.event.get():
@@ -159,10 +202,11 @@ if __name__ == "__main__":
                     steps -= 1 if steps > 1 else 0
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                points.append(event.pos)
-                speeds.append((random.random() * 2, random.random() * 2))
+                a, b = event.pos
+                points.append(Vec2d(a, b, random.random() * 2, random.random() * 2))
 
-        gameDisplay.fill((0, 0, 0))
+
+        gameDisplay.fill((1, 2, 3))
         hue = (hue + 1) % 360
         color.hsla = (hue, 100, 50, 100)
         draw_points(points)
@@ -171,7 +215,7 @@ if __name__ == "__main__":
             set_points(points, speeds)
         if show_help:
             draw_help()
-
+        clock.tick(FPS)
         pygame.display.flip()
 
     pygame.display.quit()
