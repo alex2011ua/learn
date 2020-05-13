@@ -36,65 +36,44 @@ class Vec2d:
         return self.x, self.y
 
 
+
 class Polyline:
-    def ad
+    def __init__(self):
+        self.points = []
 
     def set_points(self):
-        pass
-    def draw_points(self):
-        pass
+        """функция перерасчета координат опорных точек"""
+        for p in self.points:
+            p.x = p.x + p.speed_x
+            p.y = p.y + p.speed_y
+            if p.x > SCREEN_DIM[0] or p.x < 0:
+                p.speed_x = - p.speed_x
+            if p.speed_y > SCREEN_DIM[1] or p.speed_y < 0:
+                p.speed_y = - p.speed_y
+
+    def draw_points(self, width=3, color=(255, 255, 255)):
+        for p in self.points:
+            pygame.draw.circle(gameDisplay, color,
+                               (int(p.x), int(p.y)), width)
 
 
 class Knot(Polyline):
-    pass
+    def get_knot(self, count):
+        if len(points) < 3:
+            return []
+        res = []
+        for i in range(-2, len(points) - 2):
+            ptn = []
+            ptn.append(mul(add(points[i], points[i + 1]), 0.5))
+            ptn.append(points[i + 1])
+            ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
+
+            res.extend(get_points(ptn, count))
+        return res
 
 
 
 
-# =======================================================================================
-# Функции для работы с векторами
-# =======================================================================================
-def sub(x, y):
-    """"возвращает разность двух векторов"""
-    return x[0] - y[0], x[1] - y[1]
-
-
-def add(x, y):
-    """возвращает сумму двух векторов"""
-    return x[0] + y[0], x[1] + y[1]
-
-
-def length(x):
-    """возвращает длину вектора"""
-    return math.sqrt(x[0] * x[0] + x[1] * x[1])
-
-
-def mul(v, k):
-    """возвращает произведение вектора на число"""
-    return v[0] * k, v[1] * k
-
-
-def vec(x, y):
-    """возвращает пару координат, определяющих вектор (координаты точки конца вектора),
-    координаты начальной точки вектора совпадают с началом системы координат (0, 0)"""
-    return sub(y, x)
-
-
-# =======================================================================================
-# Функции отрисовки
-# =======================================================================================
-def draw_points(points, style="points", width=3, color=(255, 255, 255)):
-    """функция отрисовки точек на экране"""
-    if style == "line":
-        for p_n in range(-1, len(points) - 1):
-            pygame.draw.line(gameDisplay, color,
-                             (int(points[p_n][0]), int(points[p_n][1])),
-                             (int(points[p_n + 1][0]), int(points[p_n + 1][1])), width)
-
-    elif style == "points":
-        for p in points:
-            pygame.draw.circle(gameDisplay, color,
-                               (int(p[0]), int(p[1])), width)
 
 
 def draw_help():
@@ -120,6 +99,15 @@ def draw_help():
             text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
 
 
+"""функция отрисовки точек на экране"""
+        if style == "line":
+            for p_n in range(-1, len(points) - 1):
+                pygame.draw.line(gameDisplay, color,
+                                 (int(points[p_n][0]), int(points[p_n][1])),
+                                 (int(points[p_n + 1][0]), int(points[p_n + 1][1])),
+                                 width)
+
+
 # =======================================================================================
 # Функции, отвечающие за расчет сглаживания ломаной
 # =======================================================================================
@@ -139,28 +127,10 @@ def get_points(base_points, count):
     return res
 
 
-def get_knot(points, count):
-    if len(points) < 3:
-        return []
-    res = []
-    for i in range(-2, len(points) - 2):
-        ptn = []
-        ptn.append(mul(add(points[i], points[i + 1]), 0.5))
-        ptn.append(points[i + 1])
-        ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
-
-        res.extend(get_points(ptn, count))
-    return res
 
 
-def set_points(points, speeds):
-    """функция перерасчета координат опорных точек"""
-    for p in range(len(points)):
-        points[p] = add(points[p], speeds[p])
-        if points[p][0] > SCREEN_DIM[0] or points[p][0] < 0:
-            speeds[p] = (- speeds[p][0], speeds[p][1])
-        if points[p][1] > SCREEN_DIM[1] or points[p][1] < 0:
-            speeds[p] = (speeds[p][0], -speeds[p][1])
+
+
 
 
 # =======================================================================================
@@ -173,8 +143,7 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
     steps = 35
     working = True
-    points = []
-    speeds = []
+    poliline = Polyline()
     show_help = False
     pause = True
 
@@ -203,16 +172,17 @@ if __name__ == "__main__":
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 a, b = event.pos
-                points.append(Vec2d(a, b, random.random() * 2, random.random() * 2))
-
+                poliline.points.append(Vec2d(a, b, random.random() * 2, random.random() * 2))
 
         gameDisplay.fill((1, 2, 3))
         hue = (hue + 1) % 360
         color.hsla = (hue, 100, 50, 100)
-        draw_points(points)
-        draw_points(get_knot(points, steps), "line", 3, color)
+        poliline.draw_points(poliline.points)
+
+
+        draw_points(get_knot(poliline.points, steps), "line", 3, color)
         if not pause:
-            set_points(points, speeds)
+            poliline.set_points()
         if show_help:
             draw_help()
         clock.tick(FPS)
