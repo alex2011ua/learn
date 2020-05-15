@@ -10,7 +10,7 @@ FPS = 120
 
 
 class Vec2d:
-    def __init__(self, x, y, speed_x, speed_y):
+    def __init__(self, x, y, speed_x=None, speed_y=None):
         self.x = x
         self.y = y
 
@@ -19,14 +19,30 @@ class Vec2d:
 
     def __add__(self, other):
         """возвращает сумму двух векторов"""
-        return self.x + other.x, self.y + other.y
+        if isinstance(other, Vec2d):
+            x = self.x + other.x
+            y = self.y + other.y
+            return Vec2d(x, y)
+        else:
+            x = self.x + other
+            y = self.y + other
+            return Vec2d(x, y)
 
     def __sub__(self, other):
-        return self.x - other.x, self.y - other.y
+        if isinstance(other, Vec2d):
+            x = self.x - other.x
+            y = self.y - other.y
+            return Vec2d(x, y)
+        else:
+            x = self.x - other
+            y = self.y - other
+            return Vec2d(x, y)
 
     def __mul__(self, k):
         """возвращает произведение вектора на число"""
-        return self.x * k, self.y * k
+        x = self.x * k
+        y = self.y * k
+        return Vec2d(x, y)
 
     def lengh(self):
         """возвращает длину вектора"""
@@ -34,7 +50,6 @@ class Vec2d:
 
     def int_pair(self):
         return self.x, self.y
-
 
 
 class Polyline:
@@ -55,28 +70,20 @@ class Polyline:
         for p in self.points:
             pygame.draw.circle(gameDisplay, color,
                                (int(p.x), int(p.y)), width)
-            """функция отрисовки точек на экране
-                    if style == "line":
-                        for p_n in range(-1, len(points) - 1):
-                            pygame.draw.line(gameDisplay, color,
-                                             (int(points[p_n][0]), int(points[p_n][1])),
-                                             (int(points[p_n + 1][0]), int(points[p_n + 1][1])),
-                                             width)
-            """
 
 
 class Knot(Polyline):
-    def __init__(self, points):
+    def __init__(self, poly):
         super().__init__()
-        self.points = points
+        self.points = poly.points
 
-    def get_point(self, alpha, deg=None):
+    def get_point(self, base_points, alpha, deg=None):
         if deg is None:
-            deg = len(self.points) - 1
+            deg = len(base_points) - 1
         if deg == 0:
-            return self.points[0]
-        return (self.points[deg] + alpha), \
-               (self.get_point(alpha, deg - 1) * 1 - alpha)
+            return base_points[0]
+        return (base_points[deg] * alpha) + \
+               (self.get_point(base_points, alpha, deg - 1) * (1 - alpha))
 
     def get_points(self, base_points, count):
         alpha = 1 / count
@@ -86,7 +93,7 @@ class Knot(Polyline):
         return res
 
     def get_knot(self, count):
-        if len(self.points) < 3:
+        if len(self.points) < 4:
             return []
         res = []
         for i in range(-2, len(self.points) - 2):
@@ -98,8 +105,12 @@ class Knot(Polyline):
             res.extend(self.get_points(ptn, count))
         return res
 
-
-
+    def draw_points(self, points, width=3, color=(255, 255, 255)):
+        for p_n in range(-1, len(points) - 1):
+            pygame.draw.line(gameDisplay, color,
+                             (int(points[p_n].x), int(points[p_n].y)),
+                             (int(points[p_n + 1].x), int(points[p_n + 1].y)),
+                             width)
 
 
 
@@ -133,7 +144,7 @@ if __name__ == "__main__":
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
     clock = pygame.time.Clock()
-    steps = 35
+    steps = 2
     working = True
     poliline = Polyline()
     show_help = False
@@ -173,7 +184,7 @@ if __name__ == "__main__":
 
         knot = Knot(poliline)
         list_knot = knot.get_knot(steps)
-        draw_points(, "line", 3, color)
+        knot.draw_points(list_knot, 3, color)
         if not pause:
             poliline.set_points()
         if show_help:
