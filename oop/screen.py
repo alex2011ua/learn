@@ -48,27 +48,54 @@ class Polyline:
             p.y = p.y + p.speed_y
             if p.x > SCREEN_DIM[0] or p.x < 0:
                 p.speed_x = - p.speed_x
-            if p.speed_y > SCREEN_DIM[1] or p.speed_y < 0:
+            if p.y > SCREEN_DIM[1] or p.y < 0:
                 p.speed_y = - p.speed_y
 
     def draw_points(self, width=3, color=(255, 255, 255)):
         for p in self.points:
             pygame.draw.circle(gameDisplay, color,
                                (int(p.x), int(p.y)), width)
+            """функция отрисовки точек на экране
+                    if style == "line":
+                        for p_n in range(-1, len(points) - 1):
+                            pygame.draw.line(gameDisplay, color,
+                                             (int(points[p_n][0]), int(points[p_n][1])),
+                                             (int(points[p_n + 1][0]), int(points[p_n + 1][1])),
+                                             width)
+            """
 
 
 class Knot(Polyline):
+    def __init__(self, points):
+        super().__init__()
+        self.points = points
+
+    def get_point(self, alpha, deg=None):
+        if deg is None:
+            deg = len(self.points) - 1
+        if deg == 0:
+            return self.points[0]
+        return (self.points[deg] + alpha), \
+               (self.get_point(alpha, deg - 1) * 1 - alpha)
+
+    def get_points(self, base_points, count):
+        alpha = 1 / count
+        res = []
+        for i in range(count):
+            res.append(self.get_point(base_points, i * alpha))
+        return res
+
     def get_knot(self, count):
-        if len(points) < 3:
+        if len(self.points) < 3:
             return []
         res = []
-        for i in range(-2, len(points) - 2):
+        for i in range(-2, len(self.points) - 2):
             ptn = []
-            ptn.append(mul(add(points[i], points[i + 1]), 0.5))
-            ptn.append(points[i + 1])
-            ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
+            ptn.append((self.points[i] + self.points[i + 1]) * 0.5)
+            ptn.append(self.points[i + 1])
+            ptn.append((self.points[i + 1] + self.points[i + 2]) * 0.5)
 
-            res.extend(get_points(ptn, count))
+            res.extend(self.get_points(ptn, count))
         return res
 
 
@@ -99,43 +126,8 @@ def draw_help():
             text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
 
 
-"""функция отрисовки точек на экране"""
-        if style == "line":
-            for p_n in range(-1, len(points) - 1):
-                pygame.draw.line(gameDisplay, color,
-                                 (int(points[p_n][0]), int(points[p_n][1])),
-                                 (int(points[p_n + 1][0]), int(points[p_n + 1][1])),
-                                 width)
 
 
-# =======================================================================================
-# Функции, отвечающие за расчет сглаживания ломаной
-# =======================================================================================
-def get_point(points, alpha, deg=None):
-    if deg is None:
-        deg = len(points) - 1
-    if deg == 0:
-        return points[0]
-    return add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))
-
-
-def get_points(base_points, count):
-    alpha = 1 / count
-    res = []
-    for i in range(count):
-        res.append(get_point(base_points, i * alpha))
-    return res
-
-
-
-
-
-
-
-
-# =======================================================================================
-# Основная программа
-# =======================================================================================
 if __name__ == "__main__":
     pygame.init()
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
@@ -174,13 +166,14 @@ if __name__ == "__main__":
                 a, b = event.pos
                 poliline.points.append(Vec2d(a, b, random.random() * 2, random.random() * 2))
 
-        gameDisplay.fill((1, 2, 3))
+        gameDisplay.fill((1, 2, 20))
         hue = (hue + 1) % 360
         color.hsla = (hue, 100, 50, 100)
-        poliline.draw_points(poliline.points)
+        poliline.draw_points()
 
-
-        draw_points(get_knot(poliline.points, steps), "line", 3, color)
+        knot = Knot(poliline)
+        list_knot = knot.get_knot(steps)
+        draw_points(, "line", 3, color)
         if not pause:
             poliline.set_points()
         if show_help:
