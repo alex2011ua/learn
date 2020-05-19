@@ -6,7 +6,6 @@ import random
 import math
 
 SCREEN_DIM = (800, 600)
-FPS = 120
 FPS = 50
 
 
@@ -94,7 +93,6 @@ class Knot(Polyline):
         return res
 
     def get_knot(self, count):
-        if len(self.points) < 4:
         if len(self.points) < 3:
             return []
         res = []
