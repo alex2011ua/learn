@@ -25,24 +25,32 @@ class Hero:
     def get_stats(self):
         return self.stats.copy()
 
-class AbstractEffect
-'''   '''
 
-class AbstractPositive
-'''   '''
+class AbstractEffect:
+    def __init__(self, obj):
+        self.obj = obj
 
-class AbstractNegative
-'''   '''
 
-class Berserk
-''' Берсерк (Berserk) -
+class AbstractPositive(AbstractEffect):
+    pass
+
+
+class AbstractNegative(AbstractEffect):
+    pass
+
+
+class Berserk(AbstractPositive):
+    pass
+    ''' Берсерк (Berserk) -
 
     Увеличивает характеристики: Сила, Выносливость, Ловкость, Удача на 7;
     уменьшает характеристики: Восприятие, Харизма, Интеллект на 3;
     количество единиц здоровья увеличивается на 50.  '''
 
-class Blessing
-''' Благословение (Blessing) -
+
+class Blessing(AbstractPositive):
+    pass
+    ''' Благословение (Blessing) -
     увеличивает все основные характеристики на 2.
       Сила (Strength), 
       Восприятие (Perception), 
@@ -52,17 +60,25 @@ class Blessing
       Ловкость (Agility), 
       Удача (Luck)'''
 
-class Weakness
-''' Слабость (Weakness) -
+
+class Weakness(AbstractNegative):
+    pass
+    ''' Слабость (Weakness) -
 
     уменьшает характеристики: Сила, Выносливость, Ловкость на 4.  '''
 
-class Curse
-''' Проклятье (Curse) -
+
+class Curse(AbstractNegative):
+    pass
+    ''' Проклятье (Curse) -
 
     уменьшает все основные характеристики на 2.  '''
 
-class EvilEye
+
+class EvilEye(AbstractNegative):
+    pass
+
+
 ''' Сглаз (EvilEye) -
 
     уменьшает  характеристику Удача на 10.  '''
