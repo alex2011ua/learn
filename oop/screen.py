@@ -7,6 +7,7 @@ import math
 
 SCREEN_DIM = (800, 600)
 FPS = 120
+FPS = 50
 
 
 class Vec2d:
@@ -94,6 +95,7 @@ class Knot(Polyline):
 
     def get_knot(self, count):
         if len(self.points) < 4:
+        if len(self.points) < 3:
             return []
         res = []
         for i in range(-2, len(self.points) - 2):
@@ -125,8 +127,11 @@ def draw_help():
     data.append(["P", "Pause/Play"])
     data.append(["Num+", "More points"])
     data.append(["Num-", "Less points"])
+    data.append(["A", "Speed -"])
+    data.append(["S", "Speed +"])
     data.append(["", ""])
     data.append([str(steps), "Current points"])
+    data.append([str(FPS), "Current speed"])
 
     pygame.draw.lines(gameDisplay, (255, 50, 50, 255), True, [
         (0, 0), (800, 0), (800, 600), (0, 600)], 5)
@@ -144,9 +149,10 @@ if __name__ == "__main__":
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
     clock = pygame.time.Clock()
-    steps = 2
+    steps = 4
     working = True
     poliline = Polyline()
+
     show_help = False
     pause = True
 
@@ -162,8 +168,16 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE:
                     working = False
                 if event.key == pygame.K_r:
-                    points = []
-                    speeds = []
+                    poliline.points = []
+
+                if event.key == pygame.K_s:
+                    FPS += 15
+                    if FPS >100:
+                        FPS = 100
+                if event.key == pygame.K_a:
+                    FPS -= 20
+                    if FPS < 1:
+                        FPS = 1
                 if event.key == pygame.K_p:
                     pause = not pause
                 if event.key == pygame.K_KP_PLUS:
