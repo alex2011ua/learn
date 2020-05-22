@@ -1,11 +1,14 @@
 class System:
     def __init__(self):
-        self.map = self.grid = [[0 for i in range(30)] for _ in range(20)]
-        self.map[5][7] = 1  # Источники света
-        self.map[5][2] = -1  # Стены
+        self.map = self.grid = [[0 for i in range(5)] for _ in range(2)]
+        self.map[1][0] = 1  # Источники света
+        self.map[0][2] = -1  # Стены
+
 
     def get_lightening(self, light_mapper):
+        print (self.map)
         self.lightmap = light_mapper.lighten(self.map)
+        print(self.lightmap)
     pass
 
 
@@ -38,24 +41,26 @@ class MappingAdapter:
 
     def lighten(self, grid):
         self.grid = grid
-        l = len(self.grid[1])
-        h = len(self.grid[0])
+        l = len(self.grid[0])
+        h = len(self.grid)
         self.adaptee.set_dim((l, h))
 
-        for i in range(l):
-            for j in range(h):
-                if j == 1:
-                    self.adaptee.lights.append(j, i)
-                if j == -1:
-                    self.adaptee.obstacles.append(j, i)
-        map_list1 = self.adaptee.generate_lights()
-        light_map = self.grid.copy()
-        for i in range(l):
-            for j in range(h):
-                light_map.append(j, i)
+        obstacles = []
+        lights = []
+        for i in range(h):
+            for j in range(l):
+                if self.grid[i][j] == 1:
+                    lights.append((j, i))
+                if self.grid[i][j] == -1:
+                    obstacles.append((j, i))
+        self.adaptee.set_lights(lights)
+        self.adaptee.set_obstacles(obstacles)
 
-        return light_map
+        map_list = self.adaptee.generate_lights()
 
+        return map_list
 
-
-light_mapper = MappingAdapter()
+sys = System()
+light = Light((0, 0))
+light_mapper = MappingAdapter(light)
+sys.get_lightening(light_mapper)
