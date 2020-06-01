@@ -9,6 +9,16 @@ from abc import ABC
 class AbstractLevel(yaml.YAMLObject):
 
     @classmethod
+    def from_yaml(cls, loader, node):  # <-- добавим метод класса from_yaml
+        # получаем данные из yaml
+        val = loader.construct_mapping(node)
+        _map = cls.Map()
+        _obj = cls.Objects()
+        _obj.config = val
+
+        return {'map': _map, 'obj': _obj}
+
+    @classmethod
     def get_map(cls):
         return cls.Map()
 
@@ -24,6 +34,8 @@ class AbstractLevel(yaml.YAMLObject):
 
 
 class EasyLevel(AbstractLevel):
+    yaml_tag = '!easy_level'
+
     class Map:
         def __init__(self):
             self.Map = [[0 for _ in range(5)] for _ in range(5)]
@@ -59,6 +71,8 @@ class EasyLevel(AbstractLevel):
 
 
 class MediumLevel(AbstractLevel):
+    yaml_tag = '!medium_level'
+
     class Map:
         def __init__(self):
             self.Map = [[0 for _ in range(8)] for _ in range(8)]
@@ -94,6 +108,8 @@ class MediumLevel(AbstractLevel):
 
 
 class HardLevel(AbstractLevel):
+    yaml_tag = '!hard_level'
+
     class Map:
         def __init__(self):
             self.Map = [[0 for _ in range(10)] for _ in range(10)]
@@ -132,34 +148,3 @@ class HardLevel(AbstractLevel):
 
             return self.objects
 
-
-Levels = {'levels':[]}
-_map = EasyLevel.Map()
-_obj = EasyLevel.Objects()
-Levels['levels'].append({'map': _map, 'obj': _obj})
-
-_map = MediumLevel.Map()
-_obj = MediumLevel.Objects()
-_obj.config = {'enemy':['rat']}
-Levels['levels'].append({'map': _map, 'obj': _obj})
-
-_map = HardLevel.Map()
-_obj = HardLevel.Objects()
-_obj.config = {'enemy': ['rat', 'snake', 'dragon'], 'enemy_count': 10}
-Levels['levels'].append({'map': _map, 'obj': _obj})
-
-
-
-Levels = yaml.load(
-'''
-levels:
-    - !easy_level {}
-    - !medium_level
-        enemy: ['rat']
-    - !hard_level
-        enemy:
-            - rat
-            - snake
-            - dragon
-        enemy_count: 10
-''')
