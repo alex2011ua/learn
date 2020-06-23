@@ -4,7 +4,7 @@ import re
 import os
 
 def parse(path_to_file):
-    import re
+
     def open_file(file):
         with open(file, encoding='utf-8') as f:
             return f.read()
@@ -61,19 +61,6 @@ def parse(path_to_file):
     return [imgs, headers, linkslen, lists]
 
 
-class TestParse(unittest.TestCase):
-    def test_parse(self):
-        test_cases = (
-            ('wiki/Stone_Age', [13, 10, 12, 40]),
-            ('wiki/Brain', [19, 5, 25, 11]),
-            ('wiki/Artificial_intelligence', [8, 19, 13, 198]),
-            ('wiki/Python_(programming_language)', [2, 5, 17, 41]),
-            ('wiki/Spectrogram', [1, 2, 4, 7]),)
-
-        for path, expected in test_cases:
-            with self.subTest(path=path, expected=expected):
-                self.assertEqual(parse(path), expected)
-
 
 def build_bridge(path, start_page, end_page):
     def open_page(path, page):
@@ -81,18 +68,42 @@ def build_bridge(path, start_page, end_page):
             links = re.findall(r"(?<=/wiki/)[\w()]+", file.read())
             list_ref = set()
             for f in links:
-                if os.path.exists(f) and f != page:
+                if os.path.exists(os.path.join(path, f)) and f != page:
                     list_ref.add(f)
             return list_ref
-a = open_page(path, start_page)
 
+    curr = 0
+    D = {}
+    Prev = {start_page: None}
+    D[start_page] = 0
+    Q = [start_page]
+    visit = []
+    while Q:
+        w = Q.pop(0)
 
+        if w == end_page:
+            curr = end_page
+            break
 
-    links = open_page(path, start_page)
+        if w not in visit:
+            visit.append(w)
+            for v in open_page(path, w):
 
+                if not D.get(v):
+                    Prev[v] = w
+                    D[v] = D[w] + 1
+                    Q.append(v)
+    Ans = []
 
+    while curr is not None:
+        Ans.append(curr)
+        curr = Prev[curr]
+        if curr == start_page:
+            Ans.append(curr)
+            break
 
-    """возвращает список страниц, по которым можно перейти по ссылкам со start_page на
+    return Ans[::-1]
+"""возвращает список страниц, по которым можно перейти по ссылкам со start_page на
     end_page, начальная и конечная страницы включаются в результирующий список"""
 
     # напишите вашу реализацию логики по вычисления кратчайшего пути здесь
@@ -105,7 +116,10 @@ def get_statistics(path, start_page, end_page):
     # получаем список страниц, с которых необходимо собрать статистику
     pages = build_bridge(path, start_page, end_page)
     # напишите вашу реализацию логики по сбору статистики здесь
+    statistic = {}
 
+    for let in pages:
+        statistic[let] = parse(os.path.join(path, let))
     return statistic
 
 
