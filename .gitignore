@@ -109,4 +109,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 db.sqlite3
-oop/final_project/hero/
+oop/final_project/
