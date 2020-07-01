@@ -30,6 +30,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+D:\SynologyDrive\Python\Scrach\cursera\learn\oop\final_project\*.*
 MANIFEST
 
 # PyInstaller
