@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from corre.views import index
+from corre.views import *
 
 
 urlpatterns = [
-    url(r'^index/$', index),
-
+  
+    url(r'^routing/simple_route', simple_route),
+    url(r'^routing/slug_route/(?P<slug>[-_a-z0-9]+)/$', slug_route),
+    url(r'^routing/sum_route/(?P<first>\d+)/(?P<second>\d+)', sum_route),
+    url(r'^routing/sum_get_method/.*', sum_get_method),
+    url(r'^routing/sum_post_method/.*', sum_post_method),
     url(r'^admin/', admin.site.urls),
 ]
