@@ -7,7 +7,7 @@ def echo(request):
     dat = str(datetime.datetime.now())[10:-7]
     b = request.META
     a = {}
-    a['statement'] = b.get('HTTP_X-PRINT_STATEMENT')
+    a['statement'] = b.get('HTTP_X_PRINT_STATEMENT')
 
     a['metod'] = request.method
     param = None
@@ -24,7 +24,7 @@ def echo(request):
             a['param'].append(c)
     else:
         a['key'] = None
-    print(a[])
+    print(a['statement'])
     lis = ['1','2','3']
     return render(request, 'echo.html', a)
 
