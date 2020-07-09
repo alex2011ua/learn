@@ -6,7 +6,11 @@ from django.views.decorators.http import require_GET, require_POST
 
 @require_GET
 def simple_route(request):
-    return HttpResponse(content = '', status = '200')
+    return render(request, 'corre/index.html')
+
+def topic_details(request, pk):
+    print(pk)
+    return render(request, 'corre/topic_details.html')
 
 
 def slug_route(request, slug):
