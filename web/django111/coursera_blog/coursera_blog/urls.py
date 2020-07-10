@@ -19,7 +19,7 @@ from corre.views import *
 
 
 urlpatterns = [
-  
+
     url(r'^routing/simple_route', simple_route),
     url(r'^routing/topic2(?P<pk>\d+)/$', topic_details, name = "topic"),
     url(r'^routing/slug_route/(?P<slug>[-_a-z0-9]+)/$', slug_route),
