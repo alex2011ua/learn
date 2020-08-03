@@ -1,0 +1,21 @@
+.topic{
+    margin-top: 30px;
+}
+.popular{
+
+    background-color: #ffe8a1;
+}
+.stack{
+    padding: 1px;
+    background-color: #8fd19e;
+    border-bottom: #8fd19e;
+    height: 90px;
+}
+.counter{
+    font-size: 20px;
+    width: 100px;
+}
+#first{
+    font-size: 22px;
+    width: 130px;
+}

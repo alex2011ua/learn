@@ -1,0 +1,3 @@
+{% if metod == 'GET' and key != None %}get {%for item in param %}{{item}}{%endfor%}
+{% elif metod == 'POST' and key != None %}post {%for item in param %}{{item}}{%endfor%}{%endif%}
+statement is {% if statement == None%}empty{%else%}{{statement}}{%endif%}

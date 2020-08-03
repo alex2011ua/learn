@@ -1,0 +1,21 @@
+{% extends "base.html"%}
+{% load static %}
+{% block title %} Index {% endblock%}
+{% block styles%}
+    <link rel="stylesheet" type="text/css" href="{% static "corre/css/index.css" %} ">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            {% include "corre/topic_list.html"%}
+        </div>
+        <div class="col-4">
+            {% include "corre/topic_list.html"%}
+        </div>
+    </div>
+
+
+</div>
+contenth hrthrht rh rt rh rh rh r
+{% endblock %}
