@@ -1,46 +1,52 @@
-class Hero:
-    def __init__(self):
-        self.positive_effects = []
-        self.negative_effects = []
-        self.stats = {
-            "HP": 128,  # health points
-            "MP": 42,  # magic points,
-            "SP": 100,  # skill points
+from abc import ABC, abstractmethod
 
-            "Strength": 15,  # сила
-            "Perception": 4,  # восприятие
-            "Endurance": 8,  # выносливость
-            "Charisma": 2,  # харизма
-            "Intelligence": 3,  # интеллект
-            "Agility": 8,  # ловкость
-            "Luck": 1  # удача
-        }
+
+class AbstractEffect(Hero, ABC):
+    def __init__(self, base):
+        self.base = base
 
     def get_positive_effects(self):
-        return self.positive_effects.copy()
+        return self.base.get_positive_effects()
 
     def get_negative_effects(self):
-        return self.negative_effects.copy()
+        return self.base.get_negative_effects()
 
+    @abstractmethod
     def get_stats(self):
-        return self.stats.copy()
+        pass
 
 
-class AbstractEffect:
-    def __init__(self, obj):
-        self.obj = obj
+class AbstractPositive(AbstractEffect, ABC):
+    @abstractmethod
+    def get_positive_effects(self):
+        pass
 
 
-class AbstractPositive(AbstractEffect):
-    pass
-
-
-class AbstractNegative(AbstractEffect):
-    pass
+class AbstractNegative(AbstractEffect, ABC):
+    @abstractmethod
+    def get_negative_effects(self):
+        pass
 
 
 class Berserk(AbstractPositive):
-    pass
+
+    def get_stats(self):
+        stats = self.base.get_stats()
+        stats['HP'] += 50
+        stats['Strength'] += 7
+        stats['Endurance'] += 7
+        stats['Agility'] += 7
+        stats['Luck'] += 7
+        stats['Perception'] -= 3
+        stats['Charisma'] -= 3
+        stats['Intelligence'] -= 3
+        return stats
+
+    def get_positive_effects(self):
+        copy = self.base.get_positive_effects()
+        copy.append('Berserk')
+        return copy
+
     ''' Берсерк (Berserk) -
 
     Увеличивает характеристики: Сила, Выносливость, Ловкость, Удача на 7;
@@ -49,7 +55,22 @@ class Berserk(AbstractPositive):
 
 
 class Blessing(AbstractPositive):
-    pass
+    def get_stats(self):
+        stats = self.base.get_stats()
+
+        stats['Strength'] += 2
+        stats['Endurance'] += 2
+        stats['Agility'] += 2
+        stats['Luck'] += 2
+        stats['Perception'] += 2
+        stats['Charisma'] += 2
+        stats['Intelligence'] += 2
+        return stats
+
+    def get_positive_effects(self):
+        copy = self.base.get_positive_effects()
+        copy.append('Blessing')
+        return copy
     ''' Благословение (Blessing) -
     увеличивает все основные характеристики на 2.
       Сила (Strength), 
@@ -62,74 +83,52 @@ class Blessing(AbstractPositive):
 
 
 class Weakness(AbstractNegative):
-    pass
+    def get_stats(self):
+        stats = self.base.get_stats()
+        stats['Strength'] -= 4
+        stats['Endurance'] -= 4
+        stats['Agility'] -= 4
+
+        return stats
+
+    def get_negative_effects(self):
+        copy = self.base.get_negative_effects()
+        copy.append('Weakness')
+        return copy
     ''' Слабость (Weakness) -
 
     уменьшает характеристики: Сила, Выносливость, Ловкость на 4.  '''
 
 
 class Curse(AbstractNegative):
-    pass
+
+    def get_stats(self):
+        stats = self.base.get_stats()
+        stats['Strength'] -= 2
+        stats['Endurance'] -= 2
+        stats['Agility'] -= 2
+        stats['Luck'] -= 2
+        stats['Perception'] -= 2
+        stats['Charisma'] -= 2
+        stats['Intelligence'] -= 2
+        return stats
+
+    def get_negative_effects(self):
+        copy = self.base.get_negative_effects()
+        copy.append('Curse')
+        return copy
     ''' Проклятье (Curse) -
 
     уменьшает все основные характеристики на 2.  '''
 
 
 class EvilEye(AbstractNegative):
-    pass
+    def get_stats(self):
+        stats = self.base.get_stats()
+        stats['Luck'] -= 10
+        return stats
 
-
-''' Сглаз (EvilEye) -
-
-    уменьшает  характеристику Удача на 10.  '''
-
-
-'''
-абстрактные классы AbstractPositive,  AbstractNegative и соответственно их потомки 
-могут принимать любой параметр base при инициализации объекта (_ _ init _ _ (self, base))
-
-'''
-'''
->>> from deco import *
->>> # создаем героя
->>> hero = Hero()
->>> hero.get_stats()
-{'HP': 128, 'MP': 42, 'SP': 100, 'Strength': 15, 'Perception': 4, 'Endurance': 8, 'Charisma': 2, 'Intelligence': 3, 'Agility': 8, 'Luck': 1}
->>> hero.stats
-{'HP': 128, 'MP': 42, 'SP': 100, 'Strength': 15, 'Perception': 4, 'Endurance': 8, 'Charisma': 2, 'Intelligence': 3, 'Agility': 8, 'Luck': 1}
->>> hero.get_negative_effects()
-[ ]
->>> hero.get_positive_effects()
-[ ]
->>> # накладываем эффект
-
->>> brs1 = Berserk(hero)
->>> brs1.get_stats()
-{'HP': 178, 'MP': 42, 'SP': 100, 'Strength': 22, 'Perception': 1, 'Endurance': 15, 'Charisma': -1, 'Intelligence': 0, 'Agility': 15, 'Luck': 8}
->>> brs1.get_negative_effects()
-[ ]
->>> brs1.get_positive_effects()
-['Berserk']
-
->>> # накладываем эффекты
->>> brs2 = Berserk(brs1)
-
->>> cur1 = Curse(brs2)
-
->>> cur1.get_stats()
-{'HP': 228, 'MP': 42, 'SP': 100, 'Strength': 27, 'Perception': -4, 'Endurance': 20, 'Charisma': -6, 'Intelligence': -5, 'Agility': 20, 'Luck': 13}
->>> cur1.get_positive_effects()
-['Berserk', 'Berserk']
->>> cur1.get_negative_effects()
-['Curse']
->>> # снимаем эффект Berserk
->>> cur1.base = brs1
->>> cur1.get_stats()
-{'HP': 178, 'MP': 42, 'SP': 100, 'Strength': 20, 'Perception': -1, 'Endurance': 13, 'Charisma': -3, 'Intelligence': -2, 'Agility': 13, 'Luck': 6}
->>> cur1.get_positive_effects()
-['Berserk']
->>> cur1.get_negative_effects()
-['Curse']
-
->>>
-'''
+    def get_negative_effects(self):
+        copy = self.base.get_negative_effects()
+        copy.append('EvilEye')
+        return copy
